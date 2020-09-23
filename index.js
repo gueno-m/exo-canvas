@@ -15,6 +15,12 @@ cloud.src = 'cloud.png';
 const crack = new Image();
 crack.src = 'crack.png';
 
+const tree = new Image();
+tree.src = 'tree.png';
+
+const sun = new Image();
+sun.src = 'sun.png';
+
 window.addEventListener("DOMContentLoaded", (event) => {
     moteur.play();
 });
@@ -40,9 +46,11 @@ function animation() {
 
     ctx.beginPath();
     ctx.rect(0, horizon, canvas.width, canvas.height);
-    // ctx.strokeStyle = '#FFFFFF';
     ctx.drawImage(fond, 0, 0, canvas.width, canvas.height);
-    // ctx.fillStyle = 'black'
+    ctx.fill()
+
+    ctx.beginPath();
+    ctx.drawImage(sun, (0 + time / 60) % canvas.width, -10, 100, 100);
     ctx.fill()
 
 
@@ -61,13 +69,13 @@ function animation() {
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.drawImage(cloud, (0 + time) % canvas.width - 300, Math.sin(time / 100) * 10 + 100, 150, 100);
+    ctx.drawImage(cloud, (0 + time) % canvas.width - 300, Math.sin(time / 90) * 15 + 100, 150, 100);
     ctx.drawImage(cloud, (250 + time) % canvas.width - 300, Math.sin(time /
-        100) * 10 + 100, 150, 160);
-    ctx.drawImage(cloud, (470 + time) % canvas.width - 300, Math.sin(time / 100) * 10 + 100, 250, 150);
-    ctx.drawImage(cloud, (750 + time) % canvas.width - 300, Math.sin(time / 100) * 10 + 100, 160, 150);
+        100) * 20 + 100, 150, 160);
+    ctx.drawImage(cloud, (470 + time) % canvas.width - 300, Math.sin(time / 95) * 30 + 100, 250, 150);
+    ctx.drawImage(cloud, (750 + time) % canvas.width - 300, Math.sin(time / 92) * 40 + 100, 160, 150);
     ctx.drawImage(cloud, (1000 + time) % canvas.width - 300, Math.sin(time /
-        100) * 10 + 100, 300, 130);
+        97) * 10 + 100, 300, 130);
     ctx.fill()
 
     ctx.beginPath();
@@ -110,9 +118,15 @@ function animation() {
         ctx.lineWidth = 5;
         ctx.stroke();
     }
-    o = time / 5 % 85.5
+    oCrack = time / 5 % 85.5
 
-    ctx.drawImage(crack, canvas.width / 2 + o, horizon + ((time / 85 * distance) % (canvas.height - horizon)), 60, 28)
+    oTree = (time / 10 % 155) + 300
+
+    ctx.beginPath();
+    ctx.drawImage(crack, canvas.width / 2 + oCrack, horizon + ((time / 85 * distance) % (canvas.height - horizon)), 60, 28)
+
+    ctx.drawImage(tree, canvas.width / 2 + oTree, horizon + ((time / 150 * distance) % (canvas.height - horizon)), 150, 150)
+    ctx.fill()
 
     let value = navigator.getGamepads()[0].axes[2];
 
@@ -128,16 +142,42 @@ function animation() {
         }
         isKlaxon = true
     }
-    //console.log(navigator.getGamepads()[0].buttons[0].pressed)
+
+    for (let b = 0; b < 1; b++) {
+
+        lengthC = 500;
+        distanceC = 15;
+        vC = ((time / 2 + b * distanceC) % (canvas.height - horizon));
+
+        gC = horizon + vC;
+        hC = gC + length * gC * gC * 0.0000002;
+
+        e = b * distanceC
+
+        if (hC > canvas.height) {
+            hC = canvas.height;
+        }
+
+        let pDépart = { x: canvas.width / 2 + 100 + e, y: horizon + 3 };
+        let pContrôle1 = {
+            x: canvas.width / 2 * 1.3 + e,
+            y: horizon + 20 + e
+        };
+        let pContrôle2 = {
+            x: canvas.width / 2 + e,
+            y: horizon + 20 + e
+        };
+        let pArrivée = { x: canvas.width / 2 + 400 + e, y: canvas.height - 2 };
+
+        ctx.beginPath();
+        ctx.moveTo(pDépart.x, pDépart.y);
+        ctx.bezierCurveTo(pContrôle1.x, pContrôle1.y, pContrôle2.x, pContrôle2.y, pArrivée.x, pArrivée.y);
+        ctx.strokeStyle = '#7fdb71';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
 }
 
-document.addEventListener("keydown", function(e) {
-    if (e.keyCode === 37) {
-        console.log("gauche")
-    } else if (e.keyCode === 39) {
-        console.log("droite")
-    }
-});
 
 window.addEventListener("gamepadconnected", (event) => {
     console.log("A gamepad connected:");
